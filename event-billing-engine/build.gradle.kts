@@ -8,6 +8,10 @@ plugins {
 group = "com.events.billing"
 version = "1.0.0"
 
+dependencyLocking {
+    lockAllConfigurations()
+}
+
 sonar {
     properties {
         property("sonar.projectKey", "davidagudeloo_codigo_estatico_ejemplo")
