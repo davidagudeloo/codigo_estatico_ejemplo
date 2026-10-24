@@ -1,10 +1,20 @@
 plugins {
     java
     application
+    jacoco
+    id("org.sonarqube") version "7.5.0.8588"
 }
 
 group = "com.events.billing"
 version = "1.0.0"
+
+sonar {
+    properties {
+        property("sonar.projectKey", "davidagudeloo_codigo_estatico_ejemplo")
+        property("sonar.organization", "davidagudeloo")
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml")
+    }
+}
 
 java {
     // Java 17 (LTS). El toolchain hace que Gradle use exactamente esta version.
@@ -44,4 +54,20 @@ tasks.test {
         // Muestra en consola los println de los performance tests.
         showStandardStreams = true
     }
+
+    // Genera el reporte de cobertura (jacocoTestReport) justo despues de correr los tests.
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+
+tasks.named("sonar") {
+    // El analisis necesita el XML de cobertura ya generado antes de correr.
+    dependsOn(tasks.jacocoTestReport)
 }
